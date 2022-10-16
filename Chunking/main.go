@@ -5,10 +5,10 @@ import ("fmt"
 		"io"
  		"os"
 )
-const chunkSize int64 = 4;
+const chunkSize int = 4;
 
 // function that breaks down the files into smaller 4 bit parts
-func break_down(f string, chunkSize int64)(){
+func break_down(f string, chunkSize int)([][]byte){
 	// open file
 	file, err := os.Open(f)
 	if err != nil {
@@ -16,9 +16,10 @@ func break_down(f string, chunkSize int64)(){
 		} // if
 	defer file.Close()	
 	// get file length
+	fileArray := [][]byte{}
 	fi,err := file.Stat()
-	cSize := fi.Size() / chunkSize
-	fileArray := [cSize][chunkSize]byte{}
+	cSize := int(fi.Size() / int64(chunkSize))
+	fmt.Println(cSize)
 
 	// Make array of length filesize / chunksize
 
@@ -33,8 +34,10 @@ func break_down(f string, chunkSize int64)(){
             }
             break
         }
-		fmt.Println(string(buf[:readTotal])) 
+		fileArray = append(fileArray, buf[:readTotal])
 	}
+	fmt.Println(fileArray)
+	return fileArray
 }
 
 func main() {
